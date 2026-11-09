@@ -24,6 +24,7 @@ A small, private Chrome extension that blocks distracting websites like Facebook
 - **Covers subdomains** – blocking `facebook.com` also blocks `www.facebook.com`, `m.facebook.com` and so on.
 - **Forgiving input** – paste a full URL (`https://www.Facebook.com/feed`) or type a bare domain; both become `facebook.com`.
 - **One-click shortcuts** – "Block current site" for the tab you are on, and quick-add chips for common time sinks.
+- **Optional history lock** – a switch in the popup that blocks the browser's history page (`chrome://history`). Off by default.
 - **Works on open tabs** – tabs already sitting on a newly blocked site are redirected immediately.
 - **Private by design** – no accounts, no analytics, no network requests. The list never leaves your device. See [PRIVACY.md](PRIVACY.md).
 - **Light and dark mode** – follows your system theme.

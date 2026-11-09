@@ -1,4 +1,13 @@
-import { STORAGE_KEY, getSites, hostMatches, blockedPagePath } from './shared.js';
+import {
+  STORAGE_KEY,
+  HISTORY_KEY,
+  HISTORY_BLOCKED_PATH,
+  getSites,
+  hostMatches,
+  blockedPagePath,
+  getBlockHistory,
+  isHistoryUrl,
+} from './shared.js';
 
 // Rebuilds the declarativeNetRequest rules from the stored block list.
 // Every enabled site becomes one redirect rule; `requestDomains` also covers subdomains.
@@ -56,6 +65,19 @@ async function blockOpenTabs(domains) {
   );
 }
 
+// The browser's history page (chrome://history) cannot be redirected by declarativeNetRequest,
+// so tabs that navigate to it are sent to the blocked page while the switch is on.
+async function blockHistoryTab(tabId, url) {
+  if (tabId === undefined || !isHistoryUrl(url)) return;
+  if (!(await getBlockHistory())) return;
+  await chrome.tabs.update(tabId, { url: chrome.runtime.getURL(HISTORY_BLOCKED_PATH) }).catch(() => {});
+}
+
+async function blockOpenHistoryTabs() {
+  const tabs = await chrome.tabs.query({});
+  await Promise.all(tabs.map((tab) => blockHistoryTab(tab.id, tab.url ?? tab.pendingUrl)));
+}
+
 function enabledDomains(sites) {
   return new Set(sites.filter((s) => s.enabled).map((s) => s.domain));
 }
@@ -63,8 +85,16 @@ function enabledDomains(sites) {
 chrome.runtime.onInstalled.addListener(() => queueSync());
 chrome.runtime.onStartup.addListener(() => queueSync());
 
+chrome.tabs.onCreated.addListener((tab) => blockHistoryTab(tab.id, tab.pendingUrl ?? tab.url));
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) =>
+  blockHistoryTab(tabId, changeInfo.url ?? tab.pendingUrl ?? tab.url),
+);
+
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area !== 'local' || !changes[STORAGE_KEY]) return;
+  if (area !== 'local') return;
+
+  if (changes[HISTORY_KEY]?.newValue === true) blockOpenHistoryTabs();
+  if (!changes[STORAGE_KEY]) return;
 
   const before = enabledDomains(changes[STORAGE_KEY].oldValue ?? []);
   const after = enabledDomains(changes[STORAGE_KEY].newValue ?? []);

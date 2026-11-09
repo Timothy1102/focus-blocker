@@ -1,6 +1,7 @@
 // Helpers shared by the popup, the background service worker and the blocked page.
 
 export const STORAGE_KEY = 'sites';
+export const HISTORY_KEY = 'blockHistory';
 
 /**
  * Turns whatever the user typed ("https://www.Facebook.com/feed", "facebook.com",
@@ -46,4 +47,26 @@ export async function setSites(sites) {
 
 export function blockedPagePath(domain) {
   return `/blocked.html?site=${encodeURIComponent(domain)}`;
+}
+
+/** Path of the blocked page when it stands in for the browser's history page. */
+export const HISTORY_BLOCKED_PATH = '/blocked.html?page=history';
+
+/**
+ * True for the browser's built-in history page (chrome://history, edge://history, ...),
+ * including any path, query or hash after it. Extensions cannot redirect these with
+ * declarativeNetRequest, so the background worker watches tab URLs instead.
+ */
+export function isHistoryUrl(url) {
+  return /^(?:chrome|edge|brave|vivaldi|opera):\/\/history(?:[/?#]|$)/i.test(String(url ?? ''));
+}
+
+/** Whether the "block browser history" switch is on. Off by default. */
+export async function getBlockHistory() {
+  const stored = await chrome.storage.local.get(HISTORY_KEY);
+  return stored[HISTORY_KEY] === true;
+}
+
+export async function setBlockHistory(enabled) {
+  await chrome.storage.local.set({ [HISTORY_KEY]: Boolean(enabled) });
 }

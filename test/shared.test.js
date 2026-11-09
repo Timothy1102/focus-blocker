@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { normalizeDomain, hostMatches, blockedPagePath } from '../shared.js';
+import { normalizeDomain, hostMatches, blockedPagePath, isHistoryUrl } from '../shared.js';
 
 test('normalizeDomain reduces URLs and bare domains to a lowercase domain', () => {
   assert.equal(normalizeDomain('facebook.com'), 'facebook.com');
@@ -37,4 +37,13 @@ test('hostMatches matches the domain itself and its subdomains only', () => {
 test('blockedPagePath encodes the blocked domain into the query string', () => {
   assert.equal(blockedPagePath('facebook.com'), '/blocked.html?site=facebook.com');
   assert.equal(blockedPagePath('a&b=c'), '/blocked.html?site=a%26b%3Dc');
+});
+
+test('isHistoryUrl recognises the browser history page and nothing else', () => {
+  for (const url of ['chrome://history', 'chrome://history/', 'chrome://history/?q=cats', 'chrome://history/#x', 'edge://history', 'brave://history/', 'CHROME://History']) {
+    assert.equal(isHistoryUrl(url), true, `expected ${url} to match`);
+  }
+  for (const url of ['chrome://settings', 'chrome://historyfoo', 'https://example.com/history', 'chrome-extension://abc/history', '', null, undefined]) {
+    assert.equal(isHistoryUrl(url), false, `expected ${String(url)} not to match`);
+  }
 });

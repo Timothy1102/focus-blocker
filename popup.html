@@ -11,6 +11,17 @@
       <span id="summary"></span>
     </header>
 
+    <label class="setting" for="block-history">
+      <span class="setting-text">
+        <strong>Block browser history</strong>
+        <small>Blocks the history page (chrome://history)</small>
+      </span>
+      <span class="switch">
+        <input id="block-history" type="checkbox" />
+        <span class="track"></span>
+      </span>
+    </label>
+
     <form id="add-form" autocomplete="off">
       <input id="site-input" type="text" placeholder="Add a site, e.g. facebook.com" spellcheck="false" aria-label="Website to block" />
       <button type="submit">Block</button>

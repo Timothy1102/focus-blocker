@@ -6,6 +6,10 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- Popup switch to block the browser history page (`chrome://history`). Off by default.
+
 ## [1.0.0] - 2026-11-09
 
 ### Added

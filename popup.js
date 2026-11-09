@@ -1,4 +1,4 @@
-import { normalizeDomain, getSites, setSites } from './shared.js';
+import { normalizeDomain, getSites, setSites, getBlockHistory, setBlockHistory } from './shared.js';
 
 const SUGGESTED = [
   'facebook.com',
@@ -22,6 +22,7 @@ const summaryEl = document.getElementById('summary');
 const currentBtn = document.getElementById('add-current');
 const suggestionsEl = document.getElementById('suggestions');
 const chipsEl = document.getElementById('chips');
+const historyEl = document.getElementById('block-history');
 
 let sites = [];
 let currentDomain = null;
@@ -139,11 +140,14 @@ form.addEventListener('submit', async (event) => {
   input.focus();
 });
 
+historyEl.addEventListener('change', () => setBlockHistory(historyEl.checked));
+
 input.addEventListener('input', () => showError(''));
 currentBtn.addEventListener('click', () => addSite(currentDomain));
 
 async function init() {
   sites = await getSites();
+  historyEl.checked = await getBlockHistory();
 
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });

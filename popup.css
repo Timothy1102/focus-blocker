@@ -60,6 +60,30 @@ h2 {
   color: var(--muted);
 }
 
+.setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.setting-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.setting small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
 #add-form {
   display: flex;
   gap: 6px;
