@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Focus Blocker</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Focus Blocker</h1>
+      <span id="summary"></span>
+    </header>
+
+    <form id="add-form" autocomplete="off">
+      <input id="site-input" type="text" placeholder="Add a site, e.g. facebook.com" spellcheck="false" aria-label="Website to block" />
+      <button type="submit">Block</button>
+    </form>
+    <p id="error" role="alert" hidden></p>
+
+    <button id="add-current" class="current" type="button" hidden></button>
+
+    <ul id="site-list"></ul>
+    <p id="empty" hidden>Nothing blocked yet. Add a site above to get started.</p>
+
+    <section id="suggestions" hidden>
+      <h2>Quick add</h2>
+      <div id="chips"></div>
+    </section>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
